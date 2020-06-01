@@ -9,10 +9,10 @@ import (
 	"github.com/dzisiukluciano/account-mgmt/account-mgmt-api/constants"
 	"github.com/dzisiukluciano/account-mgmt/account-mgmt-api/utils"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 var (
-	host    = utils.GetEnv("HOST", constants.DefaultHost)
 	port    = utils.GetEnv("PORT", constants.DefaultPort)
 	apiPath = utils.GetEnv("BASE_PATH", constants.BasePath)
 )
@@ -22,6 +22,7 @@ func main() {
 	e.GET(constants.HCPath, func(c echo.Context) error {
 		return c.String(http.StatusOK, "up")
 	})
+	e.Use(middleware.CORS())
 
 	container := registry.NewRegistry()
 	accHdlr := container.GetAccountHandler()
@@ -38,5 +39,5 @@ func main() {
 	txsRoutes := accRoutes.Group(constants.TransactionsPath)
 	txsRoutes.GET("", accHdlr.GetTransactions)
 
-	e.Logger.Fatal(e.Start(fmt.Sprintf("%s:%s", host, port)))
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
 }
