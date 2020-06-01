@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+  account-mgmt-api:
+    image: account-mgmt-api
+    build:
+      context: ./account-mgmt-api
+    ports:
+      - "3000:3000"
+
+  account-mgmt-front:
+    image: account-mgmt-front
+    stdin_open: true
+    build:
+      context: ./account-mgmt-front
+    volumes:
+      - './account-mgmt-front:/app'
+      - '/app/node_modules'
+    environment:
+      PORT: 8080
+      API_HOST: account-mgmt-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - account-mgmt-api
